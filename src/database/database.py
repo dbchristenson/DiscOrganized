@@ -9,11 +9,17 @@ from firebase_admin import credentials, firestore
 try:
     app = firebase_admin.initialize_app()  # Auto credentials if hosting on GCS
 except BaseException:
+    # Load credentials from .env file if not hosting on GCS
     load_dotenv()
     cred_path = os.getenv("FIREBASE_CRED_PATH")
-    cred = credentials.Certificate(cred_path)
 
+    if cred_path:
+        cred = credentials.Certificate(cred_path)
+        app = firebase_admin.initialize_app(cred)
+    else:
+        raise RuntimeError("No credentials found for Firebase")
 
+# Shared instances of the Firebase app and Firestore client
 db = firestore.client(app=app)
 
 
