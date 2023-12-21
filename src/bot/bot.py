@@ -13,7 +13,7 @@ logger = logging.getLogger('nextcord')
 logger.setLevel(logging.DEBUG)
 
 format = '%(asctime)s:%(levelname)s:%(name)s: %(message)s'
-handler = logging.FileHandler(filename='nextcord.log', mode='w')
+handler = logging.FileHandler(filename='src/bot/nextcord.log', mode='w')
 handler.setFormatter(logging.Formatter(format))
 logger.addHandler(handler)
 
