@@ -160,4 +160,4 @@ cython_debug/
 #.idea/
 
 # Ignore Firebase credentials file
-src/database/firebase-credentials.json
+src/database/firebase-cred.json
