@@ -7,7 +7,7 @@ import firebase_admin
 from firebase_admin import credentials, firestore
 
 try:
-    app = firebase_admin.initialize_app() # Auto credentials if hosting on GCS
+    app = firebase_admin.initialize_app()  # Auto credentials if hosting on GCS
 except BaseException:
     load_dotenv()
     cred_path = os.getenv("FIREBASE_CRED_PATH")
