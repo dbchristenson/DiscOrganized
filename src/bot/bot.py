@@ -6,7 +6,7 @@ import logging
 from dotenv import load_dotenv
 from nextcord import Intents
 from nextcord.ext import commands
-
+import pytest
 
 # Setup logging
 logger = logging.getLogger('nextcord')
@@ -78,6 +78,23 @@ async def on_ready():
 
     # Load all cogs
     find_cogs()
+
+    # Run tests
+    logger.info('Running tests...')
+
+    pytest_output = open('src/bot/pytest.log', 'w')
+    pytest_args = ['tests', '--capture=sys', '--log-cli-level=INFO']
+    exit_code = pytest.main(pytest_args, stdout=pytest_output)
+
+    # Print the test summary
+    pytest_output.seek(0)  # Go to the start of the StringIO buffer
+    logger.info('Tests completed. Summary:\n' + pytest_output.read())
+
+    # Check the exit code to determine if tests passed
+    if exit_code == 0:
+        logger.info('All tests passed.')
+    else:
+        logger.error('Some tests failed.')
 
 
 if __name__ == '__main__':
