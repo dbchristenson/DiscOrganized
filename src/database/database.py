@@ -6,21 +6,19 @@ from dotenv import load_dotenv
 import firebase_admin
 from firebase_admin import credentials, firestore
 
-try:
-    app = firebase_admin.initialize_app()  # Auto credentials if hosting on GCS
-except BaseException:
-    # Load credentials from .env file if not hosting on GCS
-    load_dotenv()
-    cred_path = os.getenv("FIREBASE_CRED_PATH")
+load_dotenv()
+cred_path = os.getenv('FIREBASE_CRED_PATH')
 
-    if cred_path:
-        cred = credentials.Certificate(cred_path)
-        app = firebase_admin.initialize_app(cred)
-    else:
-        raise RuntimeError("No credentials found for Firebase")
+if cred_path and os.path.exists(cred_path):
+    # Use credentials from the file
+    cred = credentials.Certificate(cred_path)
+    app = firebase_admin.initialize_app(cred)
+else:
+    # Proceed with the default initialization (e.g. on GCS)
+    app = firebase_admin.initialize_app()
 
 # Shared instances of the Firebase app and Firestore client
-db = firestore.client(app=app)
+db = firestore.client()
 
 
 class FirestoreCRUD:
