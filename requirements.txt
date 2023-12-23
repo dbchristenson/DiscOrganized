@@ -1,3 +1,4 @@
-nextcord
-python-dotenv
 firebase-admin
+nextcord
+pytest
+python-dotenv
