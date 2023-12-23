@@ -1,4 +1,5 @@
 firebase-admin
 nextcord
 pytest
+pytest-asyncio
 python-dotenv
