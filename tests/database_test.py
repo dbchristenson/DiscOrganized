@@ -25,14 +25,15 @@ class TestConnection:
 
 
 class TestCRUD:
+    '''Tests the CRUD operations on the Firestore database'''
     @pytest.mark.asyncio
     async def test_set(self):
         '''Tests the creation of a new document in the test collection.'''
         crud = FirestoreCRUD('test', 'set')
         data = {'test': 'set'}
 
-        await crud.create(data=data)
-        read_data = await crud.read()
+        await crud.set(data=data)
+        read_data = await crud.get()
 
         assert read_data == data
 
@@ -43,7 +44,7 @@ class TestCRUD:
         new_data = {'test': 'update'}
 
         await crud.update(data=new_data)
-        read_data = await crud.read()
+        read_data = await crud.get()
 
         assert read_data == new_data
 
@@ -53,7 +54,10 @@ class TestCRUD:
         crud = FirestoreCRUD('test', 'set')
         await crud.delete()
 
-        read_data = await crud.read()
+        # Reset the document to point to
+        crud.set_document('set')
+
+        read_data = await crud.get()
         assert read_data is None
 
     @pytest.mark.asyncio
@@ -61,5 +65,5 @@ class TestCRUD:
         '''Tests the assertion that a valid reference to a document exists.'''
         crud = FirestoreCRUD('test')
 
-        with pytest.raises(AssertionError):
-            await crud.create(data={'test': 'ref_assertion'})
+        with pytest.raises(ValueError):
+            await crud.set(data={'test': 'ref_assertion'})

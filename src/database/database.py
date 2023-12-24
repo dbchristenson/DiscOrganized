@@ -27,6 +27,14 @@ class FirestoreCRUD:
     and document. It uses shared instances of the Firebase app and Firestore
     client for efficient resource usage, while allowing optional overrides
     for flexibility in testing or other specific scenarios.
+
+    Methods:
+        set_document(document: str) -> None
+        check_ref() -> bool
+        set(data: dict) -> None
+        get() -> dict
+        update(data: dict) -> None
+        delete() -> None
     '''
     def __init__(self, collection: str, document: str = None, app=app, db=db):
         '''
@@ -41,47 +49,47 @@ class FirestoreCRUD:
         self.collection = collection
         self.document = document
 
-        try:
-            self.ref = db.collection(collection).document(document)
-        except ValueError:
-            self.ref = None
+        self.ref = db.collection(collection).document(document)
 
-    async def set_document(self, document: str):
-        '''Changes the document to point to'''
+    def set_collection(self, collection: str, document: str = None) -> None:
+        '''Changes the collection pointed to. Must also change the document.'''
+        self.collection = collection
+        self.document = document
+        self.ref = db.collection(collection).document(document)
+
+    def set_document(self, document: str) -> None:
+        '''Changes the document pointed to.'''
         self.document = document
         self.ref = db.collection(self.collection).document(document)
 
-    def check_ref(self):
-        '''Checks if the reference is valid'''
-        if not self.ref:
-            return False
+    def check_ref(self) -> bool:
+        '''Checks if the reference is valid.'''
+        if not self.document:
+            raise ValueError('Document not set')
         else:
             return True
 
-    async def create(self, data: dict):
-        '''Creates a new document in the collection'''
-        assert self.check_ref()
+    async def set(self, data: dict) -> None:
+        '''Sets a new document in the collection.'''
+        self.check_ref()
 
         await self.ref.set(data)
 
-    async def read(self):
-        '''Reads the document from the collection'''
-        assert self.check_ref()
+    async def get(self) -> dict:
+        '''Gets the document from the collection as a dictionary.'''
+        self.check_ref()
 
         query = await self.ref.get()
         return query.to_dict()
 
-    async def update(self, data: dict):
-        '''Updates the document with the given data'''
-        assert self.check_ref()
+    async def update(self, data: dict) -> None:
+        '''Updates the document with the given data.'''
+        self.check_ref()
 
         await self.ref.update(data)
 
-    async def delete(self):
-        '''Deletes the document from the collection'''
-        assert self.check_ref()
+    async def delete(self) -> None:
+        '''Deletes the document from the collection. Does not reset the ref.'''
+        self.check_ref()
 
         await self.ref.delete()
-
-        # Set the reference to None
-        self.ref = None
