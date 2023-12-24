@@ -24,31 +24,46 @@ class TestConnection:
         assert crud.app is not None
 
 
-@pytest.mark.asyncio
 class TestCRUD:
+    '''Tests the CRUD operations on the Firestore database'''
+    @pytest.mark.asyncio
     async def test_set(self):
+        '''Tests the creation of a new document in the test collection.'''
         crud = FirestoreCRUD('test', 'set')
         data = {'test': 'set'}
 
-        await crud.create(data=data)
-        read_data = await crud.read()
+        await crud.set(data=data)
+        read_data = await crud.get()
 
         assert read_data == data
 
+    @pytest.mark.asyncio
     async def test_update(self):
-        '''Updates the data in the test collection.'''
+        '''Tests updating the data in the test collection.'''
         crud = FirestoreCRUD('test', 'set')  # Same collection and document
         new_data = {'test': 'update'}
 
         await crud.update(data=new_data)
-        read_data = await crud.read()
+        read_data = await crud.get()
 
         assert read_data == new_data
 
+    @pytest.mark.asyncio
     async def test_delete(self):
-        '''Deletes the data in the test collection.'''
+        '''Tests deleting the data in the test collection.'''
         crud = FirestoreCRUD('test', 'set')
         await crud.delete()
 
-        read_data = await crud.read()
+        # Reset the document to point to
+        crud.set_document('set')
+
+        read_data = await crud.get()
         assert read_data is None
+
+    @pytest.mark.asyncio
+    async def test_ref_assertion(self):
+        '''Tests the assertion that a valid reference to a document exists.'''
+        crud = FirestoreCRUD('test')
+
+        with pytest.raises(ValueError):
+            await crud.set(data={'test': 'ref_assertion'})
