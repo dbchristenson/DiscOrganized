@@ -1,5 +1,6 @@
-firebase-admin
+django
 nextcord
+psycopg2
 pytest
 pytest-asyncio
 python-dotenv
