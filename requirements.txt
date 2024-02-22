@@ -1,6 +1,6 @@
-django
+django==5.0
 nextcord
-psycopg2
+psycopg2-binary
 pytest
 pytest-asyncio
 python-dotenv
