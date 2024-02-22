@@ -61,7 +61,7 @@ async def reload(ctx: commands.Context, extension: str):
 def find_cogs():
     '''Finds all cogs in the cogs folder and loads them'''
     for filename in os.listdir('src/bot/cogs'):
-        check = filename.endswith('.py') and '_' not in filename
+        check = filename.endswith('.py') and '__' not in filename
 
         if check:
             try:
@@ -84,7 +84,7 @@ async def on_ready():
 
     pytest_output = open('src/bot/pytest.log', 'w')
     pytest_args = ['tests', '--capture=sys', '--log-cli-level=INFO']
-    exit_code = pytest.main(pytest_args, stdout=pytest_output)
+    exit_code = pytest.main([pytest_args, pytest_output])
 
     # Print the test summary
     pytest_output.seek(0)  # Go to the start of the StringIO buffer
